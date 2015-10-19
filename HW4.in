@@ -1,0 +1,36 @@
+
+reservoir:
+  permeability: Permeability.txt
+  porosity: 0.2
+  length: 10000.0
+  thickness: 1.0
+  area: 200000.0
+  initial pressure: 1000.0
+
+fluid:
+  compressibility: 1.0e-6
+  viscosity: 1.0
+  formation volume factor: 1.0
+
+numerical:
+  number of grids: 4
+  time step: 1.0
+  final time: 3 
+  method: implicit
+
+wells:
+  locations: [5.0, 1495]
+  rates: [10000, -10000]
+  radii: [0.25, 0.25]
+  type: [BHP, BHP]
+
+boundary conditions:
+  left:
+    type: dirichlet 
+    value: 2000.0 
+  right:
+    type: neumann 
+    value: 0.0 
+
+unit conversion factor: 6.33e-3
+  
