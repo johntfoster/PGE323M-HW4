@@ -233,8 +233,8 @@ class HW4(object):
 
     def run(self, plot_freq=None):
 
-        if plot_freq is not None:
-            self.P_plot = []
+        
+        self.P_plot = []
 
         self.P = np.ones(self.ngrids) * self.initial_pressure
 
@@ -244,6 +244,8 @@ class HW4(object):
 
             if plot_freq is not None and i % plot_freq == 0:
                 self.P_plot.append(self.P)
+            elif (i == self.number_of_time_steps - 1):
+                self.P_plot.append(self.P)
 
         return 
 
@@ -251,19 +253,8 @@ class HW4(object):
     def get_solution(self):
         return self.P
 
-    def plot_last(self, x_unit='ft', y_unit='psi'):
 
-        P = self.get_solution()
-        x_pos = np.cumsum(self.dx_arr) + self.dx_arr / 2.0
-
-        plt.figure()
-        plt.step(x_pos, P)
-        plt.xlabel('$x$ position (' + x_unit + ')')
-        plt.ylabel('Pressure (' + y_unit + ')')
-        plt.show()
-
-
-    def plot_all(self, x_unit='ft', y_unit='psi'):
+    def plot(self, x_unit='ft', y_unit='psi'):
 
         x_pos = np.cumsum(self.dx_arr) + self.dx_arr / 2.0
 
@@ -274,3 +265,10 @@ class HW4(object):
         plt.xlabel('$x$ position (' + x_unit + ')')
         plt.ylabel('Pressure (' + y_unit + ')')
         plt.show()
+        
+        
+if __name__ == "__main__":
+    
+    problem = HW4('HW4.in')
+    problem.run()
+    problem.plot()
