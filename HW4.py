@@ -1,5 +1,4 @@
 
-from __future__ import print_function
 import yaml
 
 import numpy as np
@@ -166,7 +165,7 @@ class HW4(object):
         bc_value_1 = bcs['left']['value']
         bc_value_2 = bcs['right']['value']
 
-        for i in xrange(N):
+        for i in range(N):
 
             #Apply left BC
             if i == 0:
@@ -239,7 +238,7 @@ class HW4(object):
 
         self.P = np.ones(self.ngrids) * self.initial_pressure
 
-        for i in xrange(self.number_of_time_steps):
+        for i in range(self.number_of_time_steps):
 
             self.P = self.compute_time_step(self.P)
 
