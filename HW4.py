@@ -18,17 +18,20 @@ class HW4(object):
 
         self.permeability = self.check_input_and_return_data('permeability')
         self.input_data['numerical']['number of grids'] = self.permeability.shape[0]
-
         self.porosity = self.check_input_and_return_data('porosity')
 
         self.ngrids = self.permeability.shape[0]
 
+        self.res_height = self.input_data['reservoir']['height']
+        self.res_width = self.input_data['reservoir']['width']
+        self.res_length = self.input_data['reservoir']['length']
+        self.res_area = self.res_height * self.res_width
 
         self.dx_arr = self.assign_dx_array()
         
         self.grid_numbers = np.arange(self.ngrids)
 
-        self.res_area = self.input_data['reservoir']['area']
+
         self.fluid_viscosity = self.input_data['fluid']['viscosity']
         self.compressibility = self.input_data['fluid']['compressibility']
         self.form_volume_factor = self.input_data['fluid']['formation volume factor']
@@ -48,6 +51,14 @@ class HW4(object):
             self.solver_theta = 0.5
         else:
             self.solver_theta = self.input_data['numerical']['mixed method theta']
+
+        if 'wells' not in self.input_data:
+            self.well_grids = None
+        else:
+            self.well_grids = self.compute_well_index_locations()
+            self.well_rates = np.array(self.input_data['wells']['rates'], 
+                                       dtype=np.double)
+            self.productivity_indices = self.compute_productivity_index()
 
         self.T, self.B, self.Q = self.assemble_matrices()
 
@@ -82,7 +93,7 @@ class HW4(object):
         #If dx is not defined by user, compute a uniform dx
         if 'delta x' not in self.input_data['numerical']:
 
-            length = self.input_data['reservoir']['length']
+            length = self.res_length
             dx = np.float(length) / self.ngrids
 
             dx_arr = np.ones(self.ngrids) * dx
@@ -101,8 +112,10 @@ class HW4(object):
 
 
     def compute_well_index_locations(self):
+        
+        dx = self.dx_arr
 
-        grid_centers = np.cumsum(self.dx_arr) - self.dx_arr[0] / 2.0
+        grid_centers = np.cumsum(dx) - dx[0] / 2.0
 
         well_locations = np.array(self.input_data['wells']['locations'])
 
@@ -153,6 +166,8 @@ class HW4(object):
 
         bcs = self.input_data['boundary conditions']
 
+        wells = self.input_data['wells']
+
         N = self.ngrids
 
         T = lil_matrix((N, N), dtype=np.double)
@@ -172,7 +187,7 @@ class HW4(object):
                 T[i, i+1] = -self.compute_half_transmissibility(i, i + 1)
 
                 if bc_type_1 == 'neumann':
-                    T[i, i] = T[i,i] - T[i, i-1]
+                    T[i, i] = T[i,i] - T[i, i+1]
                 elif bc_type_1 == 'dirichlet':
                     T0 = self.compute_half_transmissibility(i, i)
                     T[i, i] = T[i,i] - T[i, i+1] + 2.0 * T0
@@ -201,10 +216,28 @@ class HW4(object):
 
             B[i] = self.compute_accumulation(i)
 
+        Q[self.well_grids] += self.well_rates
+
         
         return (T.tocsr(), 
                 csr_matrix((B, (np.arange(N), np.arange(N))), shape=(N,N)), 
                 Q)
+
+    def compute_productivity_index(self):
+
+        perm = self.permeability
+        visc = self.fluid_viscosity
+        dx = self.dx_arr
+        h = self.res_height
+        factor = self.conv_factor
+        Bw = self.form_volume_factor
+        grids = self.well_grids
+        
+        r_w = np.array(self.input_data['wells']['radii'], dtype=np.double)
+        r_eq = dx[grids] * np.exp(-np.pi / 2.0)
+
+        return ((factor * 2.0 * np.pi * perm[grids] * h) / 
+                (visc * Bw * np.log(r_eq / r_w)))
 
 
     def compute_time_step(self, P_n):
@@ -232,20 +265,25 @@ class HW4(object):
 
 
     def run(self, plot_freq=None):
-
         
-        self.P_plot = []
 
         self.P = np.ones(self.ngrids) * self.initial_pressure
 
-        for i in range(self.number_of_time_steps):
+        P_plot = []
+        self.time = []
+
+        for i in range(self.number_of_time_steps + 1):
+
+            if (plot_freq is not None and i % plot_freq == 0):
+                P_plot.append(self.P)
+                self.time.append(i * self.time_step)
+            elif (i == self.number_of_time_steps):
+                P_plot.append(self.P)
+                break
 
             self.P = self.compute_time_step(self.P)
 
-            if plot_freq is not None and i % plot_freq == 0:
-                self.P_plot.append(self.P)
-            elif (i == self.number_of_time_steps - 1):
-                self.P_plot.append(self.P)
+        self.P_plot = np.array(P_plot)
 
         return 
 
@@ -256,16 +294,35 @@ class HW4(object):
 
     def plot(self, x_unit='ft', y_unit='psi'):
 
-        x_pos = np.cumsum(self.dx_arr) + self.dx_arr / 2.0
+        x_pos = np.cumsum(self.dx_arr) - self.dx_arr[0] / 2.0
 
         plt.figure()
         for P in self.P_plot:
-            plt.step(x_pos, P)
+            plt.plot(x_pos, P)
 
         plt.xlabel('$x$ position (' + x_unit + ')')
         plt.ylabel('Pressure (' + y_unit + ')')
+        plt.xlim([0, self.res_length])
         plt.show()
         
+    def plot_BHP(self, x_unit='days', y_unit='psi'):
+
+        time = self.time
+        grids = self.well_grids
+        rates = self.well_rates
+        J = self.productivity_indices
+
+
+        BHPs = self.P_plot[:,grids].T + (rates / J)[:, None]
+
+        plt.figure()
+        for BHP in BHPs:
+            plt.plot(time, BHP)
+
+        plt.xlabel('time (' + x_unit + ')')
+        plt.ylabel('Bottom Hole Pressure (' + y_unit + ')')
+        plt.show()
+
         
 if __name__ == "__main__":
     

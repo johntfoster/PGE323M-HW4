@@ -1,36 +1,36 @@
-
 reservoir:
-  permeability: Permeability.txt
-  porosity: 0.2
-  length: 10000.0
-  thickness: 1.0
-  area: 200000.0
+#  permeability: [75., 100., 150., 125.]
+#  porosity: [0.15, 0.2, 0.25, 0.22]
+  permeability: Permeability.txt 
+  porosity: Porosity.txt 
+  length: 4000.0
+  height: 20.0
+  width: 4000.0
   initial pressure: 1000.0
 
 fluid:
-  compressibility: 1.0e-6
+  compressibility: 1.0e-5
   viscosity: 1.0
   formation volume factor: 1.0
 
 numerical:
   number of grids: 4
   time step: 1.0
-  final time: 3 
+  final time: 200.0 
   method: implicit
 
 wells:
-  locations: [5.0, 1495]
+  locations: [5.0, 1495.0]
   rates: [10000, -10000]
   radii: [0.25, 0.25]
-  type: [BHP, BHP]
+  type: [rate, rate]
 
 boundary conditions:
   left:
-    type: dirichlet 
-    value: 2000.0 
-  right:
-    type: neumann 
+    type: neumann
     value: 0.0 
+  right:
+    type: dirichlet
+    value: 500.0 
 
 unit conversion factor: 6.33e-3
-  
