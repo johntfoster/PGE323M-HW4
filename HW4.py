@@ -366,7 +366,7 @@ class HW4(object):
         """
         
         #Initialize the initial pressure
-        self.P = np.ones(self.ngrids) * self.initial_pressure
+        P = np.ones(self.ngrids) * self.initial_pressure
 
         #Initialize arrays for storing solution and time every 'plot_freq' steps
         P_plot = []
@@ -377,16 +377,16 @@ class HW4(object):
 
             #Logic for storing solutions at 'plot_freq' or on the last step
             if (plot_freq is not None and i % plot_freq == 0):
-                P_plot.append(self.P)
+                P_plot.append(P)
                 self.time.append(i * self.time_step)
-                # if (i == self.number_of_time_steps):
-                    # break
+                if (i == self.number_of_time_steps):
+                    break
             elif (i == self.number_of_time_steps):
-                P_plot.append(self.P)
+                P_plot.append(P)
                 break
 
             #Compute solution for this step        
-            self.P = self.compute_time_step(self.P)
+            P = self.compute_time_step(P)
 
         #Ensure stored solution is a numpy array for correct indexing later
         self.P_plot = np.array(P_plot)
@@ -398,7 +398,7 @@ class HW4(object):
         """
            Convenience function for finding the solution at the last step.
         """
-        return self.P
+        return self.P_plot[-1]
 
 
     def plot(self, x_unit='ft', y_unit='psi'):
@@ -414,7 +414,7 @@ class HW4(object):
         #pressure is constant over grid block).  We skip the first stored values
         #because they are just the initialization values.
         plt.figure()
-        for P in self.P_plot:
+        for P in self.P_plot[1:]:
             plt.plot(x_pos, P)
 
         #Labels, etc.
