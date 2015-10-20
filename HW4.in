@@ -3,8 +3,8 @@ reservoir:
 #  porosity: [0.15, 0.2, 0.25, 0.22]
   permeability: 50.
   porosity: 0.2
-  #permeability: Permeability.txt 
-  #porosity: Porosity.txt 
+#  permeability: Permeability.txt 
+#  porosity: Porosity.txt 
   length: 4000.0
   height: 20.0
   width: 4000.0

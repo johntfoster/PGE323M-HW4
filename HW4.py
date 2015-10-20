@@ -414,7 +414,7 @@ class HW4(object):
         #pressure is constant over grid block).  We skip the first stored values
         #because they are just the initialization values.
         plt.figure()
-        for P in self.P_plot[1:]:
+        for P in self.P_plot:
             plt.plot(x_pos, P)
 
         #Labels, etc.
