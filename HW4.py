@@ -453,7 +453,7 @@ class HW4(object):
         plt.show()
 
 
-#This module is indended to be used as a library, but if it is called as an
+#This module is intended to be used as a library, but if it is called as an
 #executable script, the solution will be computed and final pressure plotted.
 if __name__ == "__main__":
     
