@@ -1,0 +1,58 @@
+name: PGE323-HW4
+channels: !!python/tuple
+- johntfoster
+- defaults
+- conda-forge
+dependencies:
+- openssl=1.0.2j=0
+- pip=8.1.2=py35_0
+- python=3.5.2=0
+- readline=6.2=2
+- setuptools=27.2.0=py35_0
+- sqlite=3.13.0=0
+- tk=8.5.18=0
+- wheel=0.29.0=py35_0
+- xz=5.2.2=0
+- zlib=1.2.8=3
+- pip:
+  - appnope==0.1.0
+  - decorator==4.0.4
+  - gnureadline==6.3.3
+  - ipykernel==4.1.0
+  - ipython==4.0.0
+  - ipython-genutils==0.1.0
+  - ipywidgets==4.0.3
+  - jinja2==2.8
+  - jsonschema==2.5.1
+  - jupyter==1.0.0
+  - jupyter-client==4.1.1
+  - jupyter-console==4.0.3
+  - jupyter-core==4.0.6
+  - markupsafe==0.23
+  - matplotlib==1.4.3
+  - mistune==0.7.1
+  - nbconvert==4.0.0
+  - nbformat==4.0.1
+  - nose==1.3.7
+  - notebook==4.0.6
+  - numpy==1.10.1
+  - path.py==8.1.2
+  - pexpect==4.0.1
+  - pickleshare==0.5
+  - powerline-status==2.5
+  - ptyprocess==0.5
+  - pygments==2.0.2
+  - pyparsing==2.0.3
+  - python-dateutil==2.4.2
+  - pytz==2015.6
+  - pyyaml==3.11
+  - pyzmq==14.7.0
+  - qtconsole==4.1.0
+  - scipy==0.16.0
+  - simplegeneric==0.8.1
+  - six==1.10.0
+  - terminado==0.5
+  - tornado==4.2.1
+  - traitlets==4.0.0
+prefix: /Users/john/miniconda3/envs/PGE323-HW4
+

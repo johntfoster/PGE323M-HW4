@@ -457,6 +457,6 @@ class HW4(object):
 #executable script, the solution will be computed and final pressure plotted.
 if __name__ == "__main__":
     
-    problem = HW4('HW4.yaml')
+    problem = HW4('HW4.yml')
     problem.run()
     problem.plot()
