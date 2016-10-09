@@ -348,7 +348,7 @@ class HW4(object):
             b = (B / dt - theta * T).dot(P_n) + Q
             P_np1 = spsolve(A, b)
         elif method == 'explicit':
-            P = P_n + 1 / B * dt * (Q - T.dot(P_n))
+            P_np1 = P_n + 1 / B * dt * (Q - T.dot(P_n))
         else:
             A = T + B / dt
             b = (B / dt).dot(P_n) + Q
