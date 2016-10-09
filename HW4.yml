@@ -1,0 +1,38 @@
+reservoir:
+#  permeability: [75., 100., 150., 125.]
+#  porosity: [0.15, 0.2, 0.25, 0.22]
+  permeability: 50.
+  porosity: 0.2
+#  permeability: Permeability.txt 
+#  porosity: Porosity.txt 
+  length: 4000.0
+  height: 20.0
+  width: 4000.0
+  initial pressure: 1000.0
+
+fluid:
+  compressibility: 1.0e-5
+  viscosity: 1.0
+  formation volume factor: 1.0
+
+numerical:
+  number of grids: 20000
+  time step: 1.0
+  final time: 200.0 
+  method: implicit
+
+wells:
+  rate:
+    locations: [5.0, 1495.0]
+    values: [10000, -10000]
+    radii: [0.25, 0.25]
+
+boundary conditions:
+  left:
+    type: neumann
+    value: 0.0 
+  right:
+    type: dirichlet
+    value: 500.0 
+
+unit conversion factor: 6.33e-3
